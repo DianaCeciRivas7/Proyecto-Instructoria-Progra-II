@@ -244,6 +244,7 @@ public class frmLogin extends javax.swing.JFrame {
         boolean flag = false;
         String contraEncriptada = DigestUtils.md5Hex(psContraseña.getText());
         ResultSet rs = null;
+        
 
         rs = us.BuscarUsuario(txtUsuario.getText());
 
