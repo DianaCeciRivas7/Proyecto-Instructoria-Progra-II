@@ -1,0 +1,53 @@
+create database ProyectoCine;
+use ProyectoCine;
+
+create table Generos(
+	Cod_Genero int(2) unsigned zerofill not null,
+    Nombre_Genero varchar(40) not null,
+    primary key(Cod_Genero)
+)engine=innodb;
+
+create table Directores(
+	Cod_Director int(3) unsigned zerofill not null,
+    Nombre_Director varchar(40) not null,
+    Apellido_Director varchar(40),
+    primary key(Cod_Director)
+)engine=innodb;
+
+create table Peliculas(
+	Cod_Pelicula int(5) unsigned zerofill not null,
+    Nombre_Pelicula varchar(80) not null,
+    Sinopsis varchar(200) not null,
+    Duracion time,
+    Año year,
+    Cod_Genero int(2) unsigned zerofill not null,
+    Cod_Director int(3) unsigned zerofill not null,
+    index(Cod_Genero), index(Cod_Director),
+    foreign key(Cod_Genero) references Generos(Cod_Genero),
+    foreign key(Cod_Director) references Directores(Cod_Director),
+    primary key(Cod_Pelicula)
+)engine=innodb;
+
+create table Usuarios(
+    Nombre_Usuario varchar(100) not null,
+    Contraseña varbinary(8000) not null,
+    primary key(Nombre_Usuario)
+)engine=innodb;
+
+create table Bibliotecas(
+	Cod_Biblioteca int(5) unsigned not null,
+    Nombre_Biblioteca varchar(100) not null,
+    Nombre_Usuario varchar(100) not null,
+    index(Nombre_Usuario),
+    foreign key(Nombre_Usuario) references Usuarios(Nombre_Usuario),
+    primary key(Cod_Biblioteca)
+)engine=innodb;
+
+create table PeliculasPorBiblioteca(
+	Cod_Biblioteca int(5) unsigned not null,
+    Cod_Pelicula int(5) unsigned zerofill not null,
+    index(Cod_Biblioteca), index(Cod_Pelicula),
+    foreign key(Cod_Biblioteca) references Bibliotecas(Cod_Biblioteca),
+    foreign key(Cod_Pelicula) references Peliculas(Cod_Pelicula),
+    primary key(Cod_Biblioteca, Cod_Pelicula)
+)engine=innodb;
