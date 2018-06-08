@@ -45,7 +45,7 @@ public class Conexion {
         try {
 
             cnx.close();
-            System.out.println("Se cerro la conexion");
+            System.out.println("Se cerró la conexión");
         } catch (SQLException ex) {
 
         }
@@ -57,7 +57,7 @@ public class Conexion {
             Class.forName("com.mysql.jdbc.Driver");
             link = DriverManager.getConnection(url, login, password);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "ha fallado " + e);
+            JOptionPane.showMessageDialog(null, "Ha fallado. " + e);
         }
         return link;
     }
