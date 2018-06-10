@@ -1,4 +1,3 @@
-
 package TablasDB;
 
 import java.sql.ResultSet;
@@ -7,13 +6,13 @@ public class Directores {
     
     Conexion cn = new Conexion();
 
-    public void AgregarDirectores(Object p[]) throws Exception {
+   public void AgregarDirectores(Object p[]) throws Exception {
 
         try {
             cn.conectar();
             cn.UID("INSERT into Directores(Cod_Director,Nombre_Director,Apellido_Director) values(\"" + p[0] + "\",\"" + p[1] + "\",\"" + p[3] + "\");");
             cn.desconectar();
-        } catch (Exception e) {                
+        } catch (Exception e) {
             System.out.println("No logra ingresar");
         } finally {
             cn.desconectar();
@@ -21,48 +20,37 @@ public class Directores {
 
     }
 
-    public ResultSet BuscarDirector(String Nombre) throws Exception {
-        ResultSet d = null;
+    public void EliminarDirectores(int p) throws Exception {
         try {
             cn.conectar();
-            d = cn.getValores("SELECT (Cod_Director) FROM Directores);");
-        } catch (Exception e) {
-            cn.desconectar();
-            System.out.println("No logra obtener");
-        } finally {
-        }
-        return d; //Aqui no se que hacer
-    }
-
-    public void EliminarDirectores() throws Exception {
-        // ResultSet d = null;
-        try {
-            cn.conectar();
-            cn.desconectar();cn.UID("TRUNCATE TABLE Directores;");
+            cn.UID("DELETE FROM Directores WHERE Cod_Director='" + p + "'");
             cn.desconectar();
         } catch (Exception e) {
-            
             System.out.println("No logra eliminar");
         } finally {
             cn.desconectar();
         }
-        //}
-        //return d;  //Aqui no se que hacer x2
     }
-    
-    public void CambiarDirectores(Object p[]) throws Exception {
 
+    public void ModificarDirectores(Object t[]) throws Exception {
         try {
             cn.conectar();
-            cn.UID("UPDATE Directores;");
-            //No se como se haria el cambio xD
+            cn.UID("UPDATE Directores set Nombre_Director=\"" + t[1] + "\", Apellido_Director=\"" + t[2] + "\" where Cod_Director=" + t[0] + "; ");
             cn.desconectar();
-        } catch (Exception e) {                
-            System.out.println("No logra ingresar");
+        } catch (Exception e) {
+            System.out.println("No logra modificar");
+
         } finally {
             cn.desconectar();
         }
+    }
 
+    public ResultSet obtenerMaxDirectores() {
+        return cn.getValores("select max(Cod_Director) as maximo from Directores;");
+    }
+
+    public ResultSet obtenerNombreApellidoDirectores() {
+        return cn.getValores("select Nombre_Director,Apellido_Director from Directores;");
     }
     
 }
