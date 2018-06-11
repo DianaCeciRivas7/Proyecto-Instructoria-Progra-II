@@ -262,6 +262,8 @@ public class frmLogin extends javax.swing.JFrame {
         if (flag == true) {
             JOptionPane.showMessageDialog(this, "Bienvenido " + txtUsuario.getText());
             this.setVisible(false);
+            frmPrincipal ventana = new frmPrincipal();
+            ventana.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Datos no coinciden");
             txtUsuario.requestFocus();

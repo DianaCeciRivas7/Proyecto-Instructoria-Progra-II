@@ -247,6 +247,8 @@ public class frmRegistroCuenta extends javax.swing.JFrame {
             us.AgregarUsuario(p);
             this.setVisible(false);
             JOptionPane.showMessageDialog(this, "Bienvenido " + txtUsuario.getText());
+            frmPrincipal ventana = new frmPrincipal();
+            ventana.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Nombre de usuario ya existente");
             txtUsuario.requestFocus();
