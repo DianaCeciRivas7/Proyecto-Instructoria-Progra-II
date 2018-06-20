@@ -3,7 +3,7 @@ package TablasDB;
 import java.sql.ResultSet;
 
 public class Peliculas {
-    
+
     Conexion cn = new Conexion();
 
     public void AgregarPelicula(Object p[]) throws Exception {
@@ -36,6 +36,10 @@ public class Peliculas {
         return cn.getValores("SELECT Nombre_Pelicula,portada FROM Peliculas where Cod_Pelicula=" + cod + ";");
     }
 
+    public ResultSet ObtenerDatos(String nom) {
+        return cn.getValores("SELECT Peliculas.Nombre_Pelicula, Peliculas.Sinopsis, Peliculas.Duracion, Peliculas.Año, Peliculas.portada, Directores.Nombre_Director,Directores.Apellido_Director,Generos.Nombre_Genero FROM Peliculas inner join Directores on Directores.Cod_Director=Peliculas.Cod_Director inner join Generos on Generos.Cod_Genero=Peliculas.Cod_Genero where Nombre_Pelicula='" + nom + "';");
+    }
+
     public ResultSet ObtenerConteo() {
         return cn.getValores("SELECT count(portada) as cont from Peliculas;");
     }
@@ -44,8 +48,15 @@ public class Peliculas {
         return cn.getValores("select max(Cod_Pelicula) as maximo from Peliculas;");
     }
 
-    public ResultSet obtenerDatosTabla() {
-        return cn.getValores("select Peliculas.Cod_Pelicula,Peliculas.Nombre_Pelicula,Generos.Nombre_Genero,Directores.Nombre_Director,Directores.Apellido_Director,Peliculas.Año from Peliculas inner join Generos on Generos.Cod_Genero=Peliculas.Cod_Genero inner join Directores on Directores.Cod_Director=Peliculas.Cod_Director;");
+    public ResultSet obtenerNombres() {
+        return cn.getValores("select Nombre_Pelicula as Nombre from Peliculas;");
     }
-    
+
+    public ResultSet ObtenerNombreImagenOrdenado(String param) {
+        return cn.getValores("SELECT Nombre_Pelicula,portada FROM Peliculas order by " + param + " ;");
+    }
+
+    public ResultSet ObtenerCodPelicula(String param) {
+        return cn.getValores("SELECT Cod_Pelicula FROM Peliculas WHERE Nombre_Pelicula = \"" + param + "\" ;");
+    }
 }
