@@ -11,7 +11,7 @@ public class Conexion {
 
     private String url = "jdbc:mysql://127.0.0.1:3306/ProyectoCine";
     private String login = "root";
-    private String password = "12345678";
+    private String password = "nozomi";
     private Connection cnx = null;
     private Statement sttm = null;
     private ResultSet rst = null;

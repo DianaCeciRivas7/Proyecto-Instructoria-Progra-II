@@ -243,10 +243,7 @@ public class frmLogin extends javax.swing.JFrame {
         Usuarios us = new Usuarios();
         boolean flag = false;
         String contraEncriptada = DigestUtils.md5Hex(psContraseña.getText());
-        ResultSet rs = null;
-        
-
-        rs = us.BuscarUsuario(txtUsuario.getText());
+        ResultSet rs = us.BuscarUsuario(txtUsuario.getText());
 
         try {
             while (rs.next()) {
@@ -262,7 +259,7 @@ public class frmLogin extends javax.swing.JFrame {
         if (flag == true) {
             JOptionPane.showMessageDialog(this, "Bienvenido " + txtUsuario.getText());
             this.setVisible(false);
-            frmPrincipal ventana = new frmPrincipal();
+            frmPrincipal ventana = new frmPrincipal(txtUsuario.getText());
             ventana.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Datos no coinciden");

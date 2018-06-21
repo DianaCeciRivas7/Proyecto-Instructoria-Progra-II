@@ -3,6 +3,7 @@ package proyectocine;
 import TablasDB.Directores;
 import TablasDB.Generos;
 import TablasDB.Peliculas;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -22,7 +23,7 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 public class frmAgregarPelicula extends javax.swing.JFrame {
-    
+
     private JPanel contentPane;
     Peliculas pel = new Peliculas();
     File fichero = null;
@@ -33,38 +34,51 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
     DefaultComboBoxModel modeloHoras = new DefaultComboBoxModel();
     DefaultComboBoxModel modeloMinutos = new DefaultComboBoxModel();
     DefaultComboBoxModel modeloSegundos = new DefaultComboBoxModel();
-    
+    String nomUsuario;
+
     public frmAgregarPelicula() {
         initComponents();
-        
+
         llenarModelos();
         llenarCodigoPelicula();
         cmbGeneroItemStateChanged(null);
         cmbDirectorItemStateChanged(null);
-        
+
         this.setResizable(false);
         this.setLocationRelativeTo(null);
     }
-    
+
+    public frmAgregarPelicula(String nomUsuario) {
+        initComponents();
+        this.nomUsuario = nomUsuario;
+        this.getContentPane().setBackground(Color.DARK_GRAY);
+        llenarModelos();
+        llenarCodigoPelicula();
+        cmbGeneroItemStateChanged(null);
+        cmbDirectorItemStateChanged(null);
+
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
+    }
+
     public static String codificarString(BufferedImage image) {
         String imageString = null;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        
+
         try {
             ImageIO.write(image, "jpg", bos);
             byte[] imageBytes = bos.toByteArray();
-            
+
             BASE64Encoder encoder = new BASE64Encoder();
             imageString = encoder.encode(imageBytes);
-            
+
             bos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return imageString;
     }
-    
-    //Metodo para eliminar foto
+
     public void llenarModelos() {
         Generos gen = new Generos();
         ResultSet rs = gen.obtenerNombreGeneros();
@@ -76,7 +90,7 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
         } catch (Exception e) {
         }
         cmbGenero.setModel(modeloGenero);
-        
+
         Directores dir = new Directores();
         rs = dir.obtenerNombreApellidoDirectores();
         try {
@@ -89,14 +103,14 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
         } catch (Exception e) {
         }
         cmbDirector.setModel(modeloDirector);
-        
+
         Calendar añoBusqueda = Calendar.getInstance();
         int FechaActual = añoBusqueda.get(Calendar.YEAR);
         for (int año = FechaActual; año >= 1980; año--) {
             modeloAño.addElement(año);
         }
         cmbAño.setModel(modeloAño);
-        
+
         for (int hrs = 0; hrs <= 4; hrs++) {
             modeloHoras.addElement("0" + hrs);
         }
@@ -118,52 +132,52 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
         cmbMinutos.setModel(modeloMinutos);
         cmbSegundos.setModel(modeloSegundos);
     }
-    
+
     public void llenarCodigoPelicula() {
         ResultSet rs = pel.obtenerMaxPelicula();
         try {
             while (rs.next()) {
-                codigoPelicula = rs.getInt("maximo")+1;
+                codigoPelicula = rs.getInt("maximo") + 1;
                 lblCodigoPelicula.setText("" + codigoPelicula);
             }
         } catch (Exception e) {
         }
     }
-    
+
     public void llenarCodigoGenero() {
         Generos gen = new Generos();
-        ResultSet rs = gen.obtenerMaxGeneros();
+        ResultSet rs = gen.obtenerCodDeGenero("" + modeloGenero.getElementAt(cmbGenero.getSelectedIndex()));
         try {
             while (rs.next()) {
-                codigoGenero = rs.getInt("maximo");
+                codigoGenero = rs.getInt("Cod_Genero");
                 lblCodGenero.setText("" + codigoGenero);
             }
         } catch (Exception e) {
         }
     }
-    
+
     public void llenarCodigoDirector() {
         Directores dir = new Directores();
-        ResultSet rs = dir.obtenerMaxDirectores();
+        String[] director = modeloDirector.getElementAt(cmbDirector.getSelectedIndex()).toString().split(" ");
+        ResultSet rs = dir.obtenerCodDeDirector(director[0], director[1]);
         try {
             while (rs.next()) {
-                codigoDirector = rs.getInt("maximo");
+                codigoDirector = rs.getInt("Cod_Director");
                 lblCodDirector.setText("" + codigoDirector);
             }
         } catch (Exception e) {
         }
     }
-    
+
     public String obtenerDuracionSeleccionada() {
         return modeloHoras.getElementAt(cmbHoras.getSelectedIndex()) + ":" + modeloMinutos.getElementAt(cmbMinutos.getSelectedIndex()) + ":" + modeloSegundos.getElementAt(cmbSegundos.getSelectedIndex());
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         btnAbrirFotos = new javax.swing.JButton();
-        txtRutaUbicacion = new javax.swing.JTextField();
         lblFotoSeleccionada = new javax.swing.JLabel();
         lblTitulo = new javax.swing.JLabel();
         lblCod = new javax.swing.JLabel();
@@ -188,30 +202,40 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
         btnAgregarPelicula = new javax.swing.JButton();
         lblCodGenero = new javax.swing.JLabel();
         lblCodDirector = new javax.swing.JLabel();
+        btnRegresar = new javax.swing.JButton();
+        lblRutaUbicacion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnAbrirFotos.setText("Buscar");
+        btnAbrirFotos.setText("Buscar imagen");
         btnAbrirFotos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAbrirFotosActionPerformed(evt);
             }
         });
 
-        txtRutaUbicacion.setEditable(false);
-
+        lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
         lblTitulo.setText("Datos sobre la pelicula");
 
+        lblCod.setForeground(new java.awt.Color(255, 255, 255));
         lblCod.setText("Codigo:");
 
+        lblCodigoPelicula.setForeground(new java.awt.Color(255, 255, 255));
+
+        lblNombre.setForeground(new java.awt.Color(255, 255, 255));
         lblNombre.setText("Titulo:");
 
+        txtNombrePelicula.setBorder(null);
+
+        lblDuracion.setForeground(new java.awt.Color(255, 255, 255));
         lblDuracion.setText("Duracion:");
 
+        lblAño.setForeground(new java.awt.Color(255, 255, 255));
         lblAño.setText("Año:");
 
         cmbAño.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        lblGenero.setForeground(new java.awt.Color(255, 255, 255));
         lblGenero.setText("Genero:");
 
         cmbGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -221,6 +245,7 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Director:");
 
         cmbDirector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -230,18 +255,22 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
             }
         });
 
+        lblSinopsis.setForeground(new java.awt.Color(255, 255, 255));
         lblSinopsis.setText("Sinopsis:");
 
         txtAreaSipnosis.setColumns(20);
         txtAreaSipnosis.setRows(5);
+        txtAreaSipnosis.setBorder(null);
         jScrollPane1.setViewportView(txtAreaSipnosis);
 
         cmbHoras.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText(":");
 
         cmbMinutos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText(":");
 
         cmbSegundos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -253,50 +282,54 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
             }
         });
 
+        lblCodGenero.setForeground(new java.awt.Color(255, 255, 255));
+
+        lblCodDirector.setForeground(new java.awt.Color(255, 255, 255));
+
+        btnRegresar.setText("Regresar");
+        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarActionPerformed(evt);
+            }
+        });
+
+        lblRutaUbicacion.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(312, 312, 312)
-                        .addComponent(lblTitulo))
+                        .addComponent(lblGenero)
+                        .addGap(33, 33, 33)
+                        .addComponent(cmbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblCodGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(182, 182, 182)
-                        .addComponent(btnAgregarPelicula))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCod)
+                            .addComponent(lblNombre)
+                            .addComponent(lblDuracion)
+                            .addComponent(lblAño))
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCodigoPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNombrePelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbAño, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblGenero)
-                                .addGap(33, 33, 33)
-                                .addComponent(cmbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblCodGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblCod)
-                                    .addComponent(lblNombre)
-                                    .addComponent(lblDuracion)
-                                    .addComponent(lblAño))
-                                .addGap(22, 22, 22)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblCodigoPelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtNombrePelicula, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cmbAño, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cmbHoras, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel2)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cmbMinutos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cmbSegundos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                .addComponent(cmbHoras, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbMinutos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbSegundos, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(lblSinopsis))
@@ -306,17 +339,29 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
                                 .addComponent(cmbDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(lblCodDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(210, 210, 210)
-                                .addComponent(btnAbrirFotos))
-                            .addComponent(txtRutaUbicacion, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(121, 121, 121)
-                                .addComponent(lblFotoSeleccionada, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(7, 7, 7))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblRutaUbicacion, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblFotoSeleccionada, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnAbrirFotos)
+                        .addGap(49, 49, 49))))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(btnRegresar)
+                        .addGap(71, 71, 71)
+                        .addComponent(btnAgregarPelicula))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(222, 222, 222)
+                        .addComponent(lblTitulo)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -368,15 +413,17 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
                             .addComponent(lblSinopsis, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(79, 79, 79)
+                        .addGap(65, 65, 65)
                         .addComponent(lblFotoSeleccionada, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtRutaUbicacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(lblRutaUbicacion, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnAbrirFotos)))
                 .addGap(18, 18, 18)
-                .addComponent(btnAgregarPelicula)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAgregarPelicula)
+                    .addComponent(btnRegresar))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         pack();
@@ -386,36 +433,36 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
         JFileChooser file = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.jpg", "jpg");
         file.setFileFilter(filtro);
-        
+
         int seleccion = file.showOpenDialog(contentPane);
         if (seleccion == JFileChooser.APPROVE_OPTION) {
             fichero = file.getSelectedFile();
-            txtRutaUbicacion.setText(fichero.getAbsolutePath());
+            lblRutaUbicacion.setText(fichero.getAbsolutePath());
             ImageIcon icon = new ImageIcon(fichero.toString());
             System.out.println(fichero.getName());
             Icon icono = new ImageIcon(icon.getImage().getScaledInstance(lblFotoSeleccionada.getWidth(), lblFotoSeleccionada.getHeight(), Image.SCALE_DEFAULT));
             lblFotoSeleccionada.setText(null);
             lblFotoSeleccionada.setIcon(icono);
-            
+
         }
     }//GEN-LAST:event_btnAbrirFotosActionPerformed
 
     private void btnAgregarPeliculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarPeliculaActionPerformed
-        if (!txtRutaUbicacion.getText().equals("")) {
+        if (!lblRutaUbicacion.getText().equals("")) {
             try {
                 BufferedImage img = ImageIO.read(new File(fichero.toString()));
                 String imagenCodificada = codificarString(img);
                 Object[] p = {codigoPelicula, txtNombrePelicula.getText(), txtAreaSipnosis.getText(), obtenerDuracionSeleccionada(), modeloAño.getElementAt(cmbAño.getSelectedIndex()), lblCodGenero.getText(), lblCodDirector.getText(), imagenCodificada};
                 pel.AgregarPelicula(p);
-                frmPrincipal prin = new frmPrincipal();
+                frmPrincipal prin = new frmPrincipal(nomUsuario);
                 this.setVisible(false);
                 prin.setVisible(true);
             } catch (IOException ex) {
             } catch (Exception ex) {
             }
-            
+
         }
-        
+
     }//GEN-LAST:event_btnAgregarPeliculaActionPerformed
 
     private void cmbGeneroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbGeneroItemStateChanged
@@ -425,7 +472,13 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
     private void cmbDirectorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbDirectorItemStateChanged
         llenarCodigoDirector();
     }//GEN-LAST:event_cmbDirectorItemStateChanged
-    
+
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+        frmPrincipal frm = new frmPrincipal(nomUsuario);
+        frm.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnRegresarActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -461,6 +514,7 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrirFotos;
     private javax.swing.JButton btnAgregarPelicula;
+    private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cmbAño;
     private javax.swing.JComboBox<String> cmbDirector;
     private javax.swing.JComboBox<String> cmbGenero;
@@ -480,10 +534,10 @@ public class frmAgregarPelicula extends javax.swing.JFrame {
     private javax.swing.JLabel lblFotoSeleccionada;
     private javax.swing.JLabel lblGenero;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblRutaUbicacion;
     private javax.swing.JLabel lblSinopsis;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextArea txtAreaSipnosis;
     private javax.swing.JTextField txtNombrePelicula;
-    private javax.swing.JTextField txtRutaUbicacion;
     // End of variables declaration//GEN-END:variables
 }

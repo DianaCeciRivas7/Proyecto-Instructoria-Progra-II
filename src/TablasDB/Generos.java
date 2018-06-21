@@ -3,7 +3,7 @@ package TablasDB;
 import java.sql.ResultSet;
 
 public class Generos {
-    
+
     Conexion cn = new Conexion();
 
     public void AgregarGeneros(Object p[]) throws Exception {
@@ -44,7 +44,11 @@ public class Generos {
             cn.desconectar();
         }
     }
-    
+
+    public ResultSet obtenerCodDeGenero(String nom) {
+        return cn.getValores("select (Cod_Genero)  from Generos where Nombre_Genero='" + nom + "' ;");
+    }
+
     public ResultSet obtenerMaxGeneros() {
         return cn.getValores("select max(Cod_Genero) as maximo from Generos;");
     }
@@ -52,5 +56,4 @@ public class Generos {
     public ResultSet obtenerNombreGeneros() {
         return cn.getValores("select (Nombre_Genero) from Generos;");
     }
-    
 }

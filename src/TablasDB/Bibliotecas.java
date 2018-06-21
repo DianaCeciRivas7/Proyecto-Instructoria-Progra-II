@@ -3,14 +3,14 @@ package TablasDB;
 import java.sql.ResultSet;
 
 public class Bibliotecas {
-    
+
     Conexion cn = new Conexion();
 
-    public void AgregarUsuario(Object p[]) throws Exception {
+    public void AgregarBiblioteca(Object p[]) throws Exception {
 
         try {
             cn.conectar();
-            cn.UID("INSERT into Usuarios(Nombre_Usuario,Contraseña) values(\"" + p[0] + "\",\"" + p[1] + "\");");
+            cn.UID("INSERT into Bibliotecas(Cod_Biblioteca,Nombre_Biblioteca,Nombre_Usuario) values(\"" + p[0] + "\",\"" + p[1] + "\",\"" + p[2] + "\");");
             cn.desconectar();
         } catch (Exception e) {
             System.out.println("no logra ingresar");
@@ -20,30 +20,19 @@ public class Bibliotecas {
 
     }
 
-    public ResultSet BuscarUsuario(String Nombre) throws Exception {
-        ResultSet d = null;
-        try {
-            cn.conectar();
-            d = cn.getValores("SELECT (Contraseña) FROM Usuarios WHERE Nombre_Usuario='" + Nombre + "'");
-        } catch (Exception e) {
-            cn.desconectar();
-            System.out.println("No logra obtener");
-        } finally {
-        }
-        return d;
+    public ResultSet obtenerBibliotecas(String nom) {
+        return cn.getValores("select Nombre_Biblioteca from Bibliotecas where Nombre_Usuario=\"" + nom + "\" ;");
     }
 
-    public ResultSet BuscarUsuarios() throws Exception {
-        ResultSet d = null;
-        try {
-            cn.conectar();
-            d = cn.getValores("SELECT (Nombre_Usuario) FROM Usuarios;");
-        } catch (Exception e) {
-            cn.desconectar();
-            System.out.println("No logra obtener");
-        } finally {
-        }
-        return d;
+    public ResultSet obtenerMaxBibliotecas(String nom) {
+        return cn.getValores("select max(Cod_Biblioteca) as maximo from Bibliotecas where Nombre_Usuario='" + nom + "' ;");
     }
-    
+
+    public ResultSet obtenerNombresBibliotecas() {
+        return cn.getValores("select Nombre_Biblioteca from Bibliotecas;");
+    }
+
+    public ResultSet obtenerCodigo(String nom, String nomUsuario) {
+        return cn.getValores("select Cod_Biblioteca from Bibliotecas where Nombre_Biblioteca='" + nom + "' and Nombre_Usuario='" + nomUsuario + "' ;");
+    }
 }
