@@ -32,8 +32,8 @@ public class Peliculas {
         }
     }
 
-    public ResultSet ObtenerNombreImagen(int cod) {
-        return cn.getValores("SELECT Nombre_Pelicula,portada FROM Peliculas where Cod_Pelicula=" + cod + ";");
+    public ResultSet ObtenerNombreImagen() {
+        return cn.getValores("SELECT Nombre_Pelicula,portada FROM Peliculas ;");
     }
 
     public ResultSet ObtenerDatos(String nom) {
@@ -56,7 +56,11 @@ public class Peliculas {
         return cn.getValores("SELECT Nombre_Pelicula,portada FROM Peliculas order by " + param + " ;");
     }
 
-    public ResultSet ObtenerCodPelicula(String param) {
-        return cn.getValores("SELECT Cod_Pelicula FROM Peliculas WHERE Nombre_Pelicula = \"" + param + "\" ;");
+    public ResultSet ObtenerCodigo(String param) {
+        return cn.getValores("SELECT Cod_Pelicula FROM Peliculas where Nombre_Pelicula='" + param + "' ;");
+    }
+    
+    public ResultSet ObtenerNombre(String param) {
+        return cn.getValores("SELECT Nombre_Pelicula FROM Peliculas where Cod_Pelicula=" + param + " ;");
     }
 }
