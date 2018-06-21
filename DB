@@ -22,6 +22,7 @@ create table Peliculas(
     Año year,
     Cod_Genero int(2) unsigned zerofill not null,
     Cod_Director int(3) unsigned zerofill not null,
+    portada longtext,
     index(Cod_Genero), index(Cod_Director),
     foreign key(Cod_Genero) references Generos(Cod_Genero),
     foreign key(Cod_Director) references Directores(Cod_Director),
