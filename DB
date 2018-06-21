@@ -51,4 +51,4 @@ create table PeliculasPorBiblioteca(
     foreign key(Cod_Biblioteca) references Bibliotecas(Cod_Biblioteca),
     foreign key(Cod_Pelicula) references Peliculas(Cod_Pelicula),
     primary key(Cod_Biblioteca, Cod_Pelicula)
-)engine=innodb;
+)engine=innodb; 
